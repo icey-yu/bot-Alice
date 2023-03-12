@@ -7,5 +7,13 @@ logger:
   level : "all"
   stdout: true
 
+filePath: "resource/file"
+
+logPath: "resource/log"
+
+qqAccount:
+  number: 2781337720
+  psw: "Aa^2034809175"
+
 
 
