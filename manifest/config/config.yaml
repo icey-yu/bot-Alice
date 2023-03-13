@@ -7,7 +7,7 @@ logger:
   level : "all"
   stdout: true
 
-filePath: "resource/file"
+filePath: "resource/file/"
 
 logPath: "resource/log"
 
