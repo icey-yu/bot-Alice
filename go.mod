@@ -1,6 +1,6 @@
 module bot-Alice
 
-go 1.15
+go 1.20
 
 require (
 	github.com/Mrs4s/MiraiGo v0.0.0-20230310170800-80b6b2843637

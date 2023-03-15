@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/chatgp/chatgpt-go"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gctx"
 	"io"
 	"log"
 	"net/http"
@@ -52,6 +54,7 @@ func TestA(t *testing.T) {
 	//bot.FriendNotifyEvent.Subscribe(A)
 	//bot.GroupNotifyEvent.Subscribe(A)
 	bot.GroupMessageEvent.Subscribe(B)
+	bot.SelfGroupMessageEvent.Subscribe(C)
 	println("停啦")
 
 	select {}
@@ -65,10 +68,33 @@ func A(bot *client.QQClient, event client.INotifyEvent) {
 }
 
 func B(bot *client.QQClient, event *message.GroupMessage) {
+	println("?")
+	info, err := bot.GetGroupInfo(event.GroupCode)
+	if err != nil {
+		g.Log().Error(gctx.New(), err.Error())
+	}
+	members, err := bot.GetGroupMembers(info)
+	if err != nil {
+		g.Log().Error(gctx.New(), err.Error())
+	}
+	info.Members = members
+	//println(info.SelfPermission())
+	println(info.FindMember(bot.Uin).CardName)
 	msg := message.NewSendingMessage()
 	text := message.NewText(fmt.Sprintf("%d:%s", event.GroupCode, string(event.ToString())))
+	println(event.ToString())
 	msg.Elements = append(msg.Elements, text)
 	bot.SendGroupMessage(539040275, msg)
+}
+
+func C(bot *client.QQClient, event *message.GroupMessage) {
+	println("CCC")
+	println("CCC")
+	println("CCC")
+	println("CCC")
+	println("CCC")
+	println("CCC")
+	println("CCC")
 }
 
 func TestB(t *testing.T) {
