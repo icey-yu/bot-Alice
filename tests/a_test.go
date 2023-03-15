@@ -49,9 +49,9 @@ func TestA(t *testing.T) {
 	msg.Elements = append(msg.Elements, text)
 	//_ = bot.SendPrivateMessage(916874663, msg)
 	//bot.SendGroupMessage(539040275, msg)
-	bot.FriendNotifyEvent.Subscribe(A)
-	bot.GroupNotifyEvent.Subscribe(A)
-	//bot.GroupMessageEvent.Subscribe(B)
+	//bot.FriendNotifyEvent.Subscribe(A)
+	//bot.GroupNotifyEvent.Subscribe(A)
+	bot.GroupMessageEvent.Subscribe(B)
 	println("停啦")
 
 	select {}
