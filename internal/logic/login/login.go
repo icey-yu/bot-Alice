@@ -39,6 +39,7 @@ func init() {
 // Login 登录
 func (s *sLogin) Login() error {
 	ctx := context.Background()
+	g.Log().Printf(ctx, "开始登录")
 	global.Alice = client.NewClient(s.number, s.psw)
 	global.Alice.UseDevice(client.GenRandomDevice())
 	global.Alice.AllowSlider = true
@@ -47,7 +48,7 @@ func (s *sLogin) Login() error {
 	if err != nil {
 		g.Log().Error(ctx, err.Error())
 	}
-
+	g.Log().Printf(ctx, "登录成功")
 	return nil
 }
 

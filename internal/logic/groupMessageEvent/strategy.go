@@ -46,7 +46,6 @@ func (s *sGroupMessageEvent) Event(client *client.QQClient, event *message.Group
 }
 
 func (s *groupMessageEventPerformer) DoEvent() error {
-
 	// 循环顺序判断策略，如果已经处理则退出
 	for _, do := range s.strategyHandler {
 		done, err := do()
@@ -67,7 +66,7 @@ func (s *groupMessageEventPerformer) strategyMsg() (bool, error) {
 
 	switch {
 	case isAt: // @事件
-
+		return s.atEvent(msg)
 	}
 	return false, nil
 }
