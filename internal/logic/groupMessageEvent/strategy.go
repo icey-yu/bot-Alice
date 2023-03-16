@@ -2,8 +2,10 @@ package groupMessageEvent
 
 import (
 	"bot-Alice/internal/service"
+	"bot-Alice/internal/utils"
 	"github.com/Mrs4s/MiraiGo/client"
 	"github.com/Mrs4s/MiraiGo/message"
+	"github.com/gogf/gf/v2/errors/gerror"
 )
 
 type (
@@ -13,7 +15,7 @@ type (
 	groupMessageEventPerformer struct {
 		Client          *client.QQClient
 		Event           *message.GroupMessage
-		strategyHandler []func() bool
+		strategyHandler []func() (bool, error)
 	}
 )
 
@@ -26,7 +28,7 @@ func newPerformer(client *client.QQClient, event *message.GroupMessage) *groupMe
 		Client: client,
 		Event:  event,
 	}
-	s.strategyHandler = []func() bool{
+	s.strategyHandler = []func() (bool, error){
 		s.strategyMsg,
 	}
 	return s
@@ -37,26 +39,35 @@ func init() {
 }
 
 func (s *sGroupMessageEvent) Event(client *client.QQClient, event *message.GroupMessage) {
-	newPerformer(client, event).DoEvent()
-}
-
-func (s *groupMessageEventPerformer) DoEvent() {
-	var done bool
-
-	// 循环顺序判断策略，如果已经处理则退出
-	for _, do := range s.strategyHandler {
-		done = do()
-		if done {
-			return
-		}
+	err := newPerformer(client, event).DoEvent()
+	if err != nil {
+		// 该干嘛捏
 	}
 }
 
-func (s *groupMessageEventPerformer) strategyMsg() bool {
-	//msg := s.Event.ToString()
-	//
-	//switch {
-	//case
-	//}
-	return false
+func (s *groupMessageEventPerformer) DoEvent() error {
+
+	// 循环顺序判断策略，如果已经处理则退出
+	for _, do := range s.strategyHandler {
+		done, err := do()
+		if done || err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s *groupMessageEventPerformer) strategyMsg() (bool, error) {
+	msg := s.Event.ToString()
+
+	isAt, err := utils.IsAtRobotGroup(s.Client, s.Event.GroupCode, msg)
+	if err != nil {
+		return false, gerror.Wrap(err, "获取是否@bot失败")
+	}
+
+	switch {
+	case isAt: // @事件
+
+	}
+	return false, nil
 }

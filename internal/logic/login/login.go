@@ -36,6 +36,7 @@ func init() {
 	service.RegisterLogin(new_())
 }
 
+// Login 登录
 func (s *sLogin) Login() error {
 	ctx := context.Background()
 	global.Alice = client.NewClient(s.number, s.psw)
