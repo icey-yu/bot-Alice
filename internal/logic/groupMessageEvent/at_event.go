@@ -1,8 +1,10 @@
 package groupMessageEvent
 
 import (
+	"bot-Alice/internal/consts"
 	"bot-Alice/internal/service"
 	"bot-Alice/internal/utils"
+	"github.com/Mrs4s/MiraiGo/message"
 
 	"github.com/gogf/gf/v2/errors/gerror"
 )
@@ -19,7 +21,8 @@ func (s *groupMessageEventPerformer) atEvent(msg string) (bool, error) {
 		s.praiseEvent()
 		return true, nil
 	case utils.IsChatGPT(msgExAt):
-		err := s.callChatGPT(msgExAt)
+		msgExChat := utils.RemoveChat(msgExAt)
+		err := s.callChatGPT(msgExChat)
 		if err != nil {
 			return true, gerror.Wrapf(err, "调用ChatGPT失败")
 		}
@@ -34,12 +37,21 @@ func (s *groupMessageEventPerformer) callChatGPT(msg string) error {
 	// 开始调用chatGPT
 	res, err := service.ChatGPT().GroupChat(s.Event.GroupCode, msg)
 	if err != nil {
-		sendMsg := utils.BuildTextMessage("和chatGPT聊天失败了呢😔")
-		s.Client.SendGroupMessage(s.Event.GroupCode, sendMsg)
+		if gerror.Is(err, consts.ErrChatIsLocked) {
+			// 因为有人正在聊天而失败
+			sendMsg := utils.BuildTextMessage("有其他人正在聊天呢，请稍等🙃")
+			s.Client.SendGroupMessage(s.Event.GroupCode, sendMsg)
+		} else {
+			sendMsg := utils.BuildTextMessage("和chatGPT聊天失败了呢😔")
+			s.Client.SendGroupMessage(s.Event.GroupCode, sendMsg)
+		}
 		return gerror.Wrapf(err, "调用chatGPT失败")
 	}
-	sendMsg = utils.BuildTextMessage(res)
-	s.Client.SendGroupMessage(s.Event.GroupCode, sendMsg)
+	sendingMessage := message.NewSendingMessage()
+	reply := message.NewReply(s.Event)
+	msgStr := message.NewText(res)
+	sendingMessage.Elements = append(sendingMessage.Elements, reply, msgStr)
+	s.Client.SendGroupMessage(s.Event.GroupCode, sendingMessage)
 	return nil
 }
 

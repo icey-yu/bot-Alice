@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"sync"
 	"time"
 
 	"github.com/gogf/gf/v2/errors/gerror"
@@ -25,6 +26,11 @@ const (
 	overTime              = time.Minute * 2               // 超时两分钟
 	groupRedisKeyFormat   = "botAlice:chatGPT:group:%d"   // 群聊的redis会话消息保存key
 	privateRedisKeyFormat = "botAlice:chatGPT:private:%d" // 私聊的redis会话消息保存key
+)
+
+var (
+	// mutexMap 锁，每个组、每个人都有锁，第一个key为type，第二个为uin。
+	mutexMap = make(map[int]map[int64]*sync.Mutex, 0)
 )
 
 type (
@@ -44,9 +50,27 @@ func new_() *sChatGPT {
 
 func init() {
 	service.RegisterChatGPT(new_())
+	mutexMap[consts.Group] = make(map[int64]*sync.Mutex, 0)
+	mutexMap[consts.Private] = make(map[int64]*sync.Mutex, 0)
 }
 
 func (s *sChatGPT) GroupChat(code int64, msg string) (string, error) {
+	if mu, ok := mutexMap[consts.Group][code]; !ok {
+		// 新的key，新建一个锁
+		var mu sync.Mutex
+		mu.Lock()
+		defer func() {
+			mu.Unlock()
+		}()
+		mutexMap[consts.Group][code] = &mu
+	} else {
+		if !mu.TryLock() {
+			// 已经锁了
+			return "", consts.ErrChatIsLocked
+		} else {
+			defer mu.Unlock()
+		}
+	}
 	return s.chat(consts.Group, code, msg)
 }
 
@@ -103,7 +127,7 @@ func (s *sChatGPT) sendChat(msgData *model.ChatGPTMessage) (*model.ChatGPTResp, 
 
 	// 如果chat返回错误
 	if chatResp.Error != "" {
-		return nil, gerror.Wrapf(gerror.New(chatResp.Error), "chat失败：")
+		return nil, gerror.Wrapf(gerror.New(chatResp.Error), "chat失败：返回体：%s", string(respBody))
 	}
 
 	return &chatResp, nil

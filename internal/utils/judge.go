@@ -19,6 +19,7 @@ func IsAtRobotGroup(bot *client.QQClient, groupCode int64, msg string) bool {
 		g.Log().Errorf(ctx, "获取botCardName失败:%v", err)
 		return false
 	}
+
 	return IsAt(cardName, msg)
 }
 
@@ -52,10 +53,11 @@ func IsPraise(msg string) bool {
 // IsChatGPT 是否请求调用chatGPT。规则为:  chat:
 func IsChatGPT(msg string) bool {
 	// 开头是否是 chat:
-
 	msg = gstr.ToLower(msg)
+
 	msg = strings.TrimSpace(msg)
 	ruleList := []string{"chat:", "chat："}
+
 	for _, rule := range ruleList {
 		if len(msg) < len(rule) {
 			continue

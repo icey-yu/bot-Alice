@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bot-Alice/internal/consts"
 	"github.com/Mrs4s/MiraiGo/message"
 	"github.com/gogf/gf/v2/text/gstr"
 )
@@ -14,8 +15,10 @@ func RemoveAt(name, msg string) string {
 
 // RemoveChat 去除 chat:
 func RemoveChat(msg string) string {
-	msg = gstr.TrimLeft(msg, "chat:")
-	msg = gstr.TrimLeft(msg, "chat：")
+	removeList := consts.ChatGPTChat
+	for _, re := range removeList {
+		msg = gstr.TrimLeft(msg, re)
+	}
 	return msg
 }
 

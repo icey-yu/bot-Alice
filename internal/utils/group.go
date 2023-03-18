@@ -20,6 +20,10 @@ func GetGroupCardName(bot *client.QQClient, groupCode int64) (string, error) {
 	if self == nil {
 		return "", gerror.New("没有找到自己QAQ")
 	}
+
+	if self.CardName == "" {
+		self.CardName = bot.Nickname
+	}
 	return self.CardName, nil
 }
 
