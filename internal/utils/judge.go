@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/Mrs4s/MiraiGo/client"
 	"github.com/dlclark/regexp2"
@@ -53,6 +54,7 @@ func IsChatGPT(msg string) bool {
 	// 开头是否是 chat:
 
 	msg = gstr.ToLower(msg)
+	msg = strings.TrimSpace(msg)
 	ruleList := []string{"chat:", "chat："}
 	for _, rule := range ruleList {
 		if len(msg) < len(rule) {
