@@ -3,6 +3,9 @@ package groupMessageEvent
 import (
 	"bot-Alice/internal/service"
 	"bot-Alice/internal/utils"
+
+	"github.com/gogf/gf/v2/errors/gerror"
+
 	"github.com/Mrs4s/MiraiGo/client"
 	"github.com/Mrs4s/MiraiGo/message"
 	"github.com/gogf/gf/v2/frame/g"
@@ -45,7 +48,7 @@ func (s *sGroupMessageEvent) Event(client *client.QQClient, event *message.Group
 	err := newPerformer(client, event).DoEvent()
 	if err != nil {
 		// 该干嘛捏
-		g.Log().Errorf(ctx, "群聊消息处理失败：%+v", err)
+		g.Log().Errorf(ctx, "群聊消息处理失败：%+v", gerror.Cause(err))
 	}
 }
 

@@ -1,5 +1,0 @@
-2023-03-16 23:59:39.318 [ERRO] {6c3d86a593f14c17b9f81b1410ca24fc} 初始化失败 初始登录失败: 登录失败: 账号密码登录失败: SliderNeededError
-Stack:
-1.  main.main
-    D:/App/Coding/Golang/Project/self/bot-Alice/main.go:15
-

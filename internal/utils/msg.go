@@ -19,7 +19,6 @@ func RemoveChat(msg string) string {
 	return msg
 }
 
-
 // BuildTextMessage 构建发送文本信息
 func BuildTextMessage(msg string) *message.SendingMessage {
 	sendingMessage := message.NewSendingMessage()

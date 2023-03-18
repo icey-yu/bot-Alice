@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gctx"
 	"io"
 	"net/http"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gctx"
 
 	"github.com/Mrs4s/MiraiGo/message"
 
@@ -110,7 +111,7 @@ func C(bot *client.QQClient, event *message.GroupMessage) {
 
 func TestC(t *testing.T) {
 	data := map[string]string{
-		"content": "你好，我感觉很头疼",
+		"content":         "你好，我感觉很头疼",
 		"conversation_id": "",
 		"parent_id":       "",
 	}

@@ -1,8 +1,9 @@
 package tests
 
 import (
-	"github.com/dlclark/regexp2"
 	"testing"
+
+	"github.com/dlclark/regexp2"
 )
 
 func TestRegexp(t *testing.T) {

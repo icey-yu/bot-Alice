@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"testing"
+
 	"github.com/pkg/errors"
 	"github.com/redis/go-redis/v9"
-	"testing"
 )
 
 type As struct {
@@ -24,7 +25,7 @@ func TestRedis(t *testing.T) {
 
 	marshal, _ := json.Marshal(As{Name: "QAQ", Age: 10})
 
-	err := rdb.Set(ctx, "key",marshal , 0).Err()
+	err := rdb.Set(ctx, "key", marshal, 0).Err()
 	if err != nil {
 		panic(err)
 	}
