@@ -1,9 +1,9 @@
 package main
 
 import (
+	"bot-Alice/internal/core"
 	_ "bot-Alice/internal/core"
 	_ "bot-Alice/internal/packed"
-	"bot-Alice/internal/service"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gctx"
 )
@@ -11,10 +11,10 @@ import (
 func main() {
 	ctx := gctx.New()
 	//cmd.Main.Run(gctx.New())
-	err := service.Login().Login()
-	if err != nil {
-		g.Log().Error(ctx, "登录失败", err)
-	}
+	if err := core.Init(); err != nil {
+		g.Log().Errorf(ctx, "初始化失败:%+v", err)
+		return
+	} // 初始化
 
 	// 停了
 	select {}

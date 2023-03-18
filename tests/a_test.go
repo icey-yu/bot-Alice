@@ -4,11 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/chatgp/chatgpt-go"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gctx"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"testing"
@@ -20,42 +18,55 @@ import (
 )
 
 func TestA(t *testing.T) {
-	bot := client.NewClient(2781337720, "Aa^2034809175")
-	bot.UseDevice(client.GenRandomDevice())
-	bot.AllowSlider = true
-	//res, err := bot.Login()
-	//println(bot.GenToken())
-	//os.WriteFile("token.txt", bot.GenToken(), 0777)
-	token, err := os.ReadFile("token.txt")
+	//bot := client.NewClient(2781337720, "Aa^2034809175")
+	bot := client.NewClientEmpty()
+	device := client.GenRandomDevice()
+	bot.UseDevice(device)
+	device.Protocol = client.AndroidWatch
+	//bot.Device().Protocol = client.AndroidPad
+
+	err := os.WriteFile("device.txt", bot.Device().ToJson(), 0777)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	println("开些啦")
-	err = os.WriteFile("de.txt", bot.Device().ToJson(), 0777)
+
+	bot.AllowSlider = true
+	res, err := bot.Login()
+	if res.Error.String() != "" {
+		println(res.Error.String())
+		//bot = client.NewClient(2781337720, "Aa^2034809175")
+		//bot.UseDevice(client.GenRandomDevice())
+		qrCode, err := bot.FetchQRCode()
+		println("获取qrcode")
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		println(qrCode.ImageData)
+		err = os.WriteFile("qrCode.png", qrCode.ImageData, 0777)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		time.Sleep(time.Minute * 2)
+	}
+	println(bot.GenToken())
+	err = os.WriteFile("token.txt", bot.GenToken(), 0777)
+	//token, err := os.ReadFile("token.txt")
 	if err != nil {
 		t.Error(err)
 		return
 	}
 	println("写完啦")
 
-	err = bot.TokenLogin(token)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	//println(res.Success)
-	msg := message.NewSendingMessage()
-	text := message.NewText("QAQ " + time.Now().String())
-	msg.Elements = append(msg.Elements, text)
-	//_ = bot.SendPrivateMessage(916874663, msg)
-	bot.SendGroupMessage(539040275, msg)
-	//bot.FriendNotifyEvent.Subscribe(Name)
-	//bot.GroupNotifyEvent.Subscribe(Name)
-	bot.GroupMessageEvent.Subscribe(B)
-	bot.SelfGroupMessageEvent.Subscribe(C)
-	println("停啦")
+	//err = bot.TokenLogin(token)
+	//if err != nil {
+	//	t.Error(err)
+	//	return
+	//}
 
 	select {}
 }
@@ -97,31 +108,11 @@ func C(bot *client.QQClient, event *message.GroupMessage) {
 	println("CCC")
 }
 
-func TestB(t *testing.T) {
-
-	cli := chatgpt.NewClient(
-		chatgpt.WithTimeout(60*time.Second),
-		//chatgpt.WithCookies(cookies),
-		chatgpt.WithAccessToken(token),
-		chatgpt.WithUserAgent(ua),
-		chatgpt.WithModel("text-davinci-002-render-sha"),
-	)
-
-	// chat in independent conversation
-	msg := "求求你说句话⑧"
-	text, err := cli.GetChatText(msg)
-	if err != nil {
-		log.Fatalf("get chat text failed: %v", err)
-	}
-
-	log.Printf("q: %s, a: %s\n", msg, text.Content)
-}
-
 func TestC(t *testing.T) {
 	data := map[string]string{
-		"content": "Hello world",
-		//"conversation_id": uuid.New().String(),
-		//"parent_id":       uuid.New().String(),
+		"content": "你好，我感觉很头疼",
+		"conversation_id": "",
+		"parent_id":       "",
 	}
 	b, _ := json.Marshal(data)
 	body := bytes.NewReader(b)

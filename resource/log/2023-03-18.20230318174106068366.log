@@ -1,0 +1,12 @@
+2023-03-18 17:38:35.487 [ERRO] {cce96b01ef794d17de32dc48a437f3d1} 群聊消息处理失败：调用ChatGPT失败: 调用chatGPT失败: 存储会话消息失败: 存储数据失败：%!(EXTRA []uint8=[123 34 67 111 110 116 101 110 116 34 58 34 34 44 34 67 111 110 118 101 114 115 97 116 105 111 110 73 100 34 58 34 55 98 57 55 97 50 102 101 45 102 98 49 53 45 52 54 100 48 45 57 53 98 51 45 53 55 99 53 99 53 51 49 53 49 48 56 34 44 34 80 97 114 101 110 116 73 100 34 58 34 52 52 50 48 48 48 49 99 45 99 55 98 55 45 52 49 101 54 45 98 52 53 102 45 98 48 53 48 54 48 57 53 101 97 98 57 34 125]): ERR syntax error
+Stack:
+1.  bot-Alice/internal/logic/groupMessageEvent.(*sGroupMessageEvent).Event
+    D:/App/Coding/Golang/Project/self/bot-Alice/internal/logic/groupMessageEvent/strategy.go:48
+2.  github.com/Mrs4s/MiraiGo/client.(*EventHandle[...]).dispatch
+    C:/Users/Alice/go/pkg/mod/github.com/!mrs4s/!mirai!go@v0.0.0-20230315231550-b461f356a30a/client/events.go:40
+3.  github.com/Mrs4s/MiraiGo/client.decodeGroupMessagePacket
+    C:/Users/Alice/go/pkg/mod/github.com/!mrs4s/!mirai!go@v0.0.0-20230315231550-b461f356a30a/client/group_msg.go:255
+4.  github.com/Mrs4s/MiraiGo/client.(*QQClient).netLoop.func1
+    C:/Users/Alice/go/pkg/mod/github.com/!mrs4s/!mirai!go@v0.0.0-20230315231550-b461f356a30a/client/network.go:405
+
+2023-03-18 17:41:06.068 开始登录

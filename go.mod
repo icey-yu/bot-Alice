@@ -3,8 +3,9 @@ module bot-Alice
 go 1.20
 
 require (
-	github.com/Mrs4s/MiraiGo v0.0.0-20230310170800-80b6b2843637
+	github.com/Mrs4s/MiraiGo v0.0.0-20230315231550-b461f356a30a
 	github.com/chatgp/chatgpt-go v1.3.1
+	github.com/dlclark/regexp2 v1.8.1
 	github.com/gogf/gf/v2 v2.3.1
 )
 
@@ -12,8 +13,9 @@ require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/RomiChan/protobuf v0.1.1-0.20230204044148-2ed269a2e54d // indirect
 	github.com/RomiChan/syncx v0.0.0-20220404072119-d7ea0ae15a4c // indirect
+	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/clbanning/mxj/v2 v2.5.5 // indirect
-	github.com/dlclark/regexp2 v1.8.1 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/fumiama/imgsz v0.0.2 // indirect
@@ -31,6 +33,7 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/pierrec/lz4/v4 v4.1.15 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/redis/go-redis/v9 v9.0.2 // indirect
 	github.com/tidwall/gjson v1.14.4 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect

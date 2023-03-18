@@ -5,7 +5,8 @@ import (
 	"bot-Alice/internal/utils"
 	"github.com/Mrs4s/MiraiGo/client"
 	"github.com/Mrs4s/MiraiGo/message"
-	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gctx"
 )
 
 type (
@@ -29,7 +30,7 @@ func newPerformer(client *client.QQClient, event *message.GroupMessage) *groupMe
 		Event:  event,
 	}
 	s.strategyHandler = []func() (bool, error){
-		s.strategyMsg,
+		s.strategyMsg, // 消息 策略
 	}
 	return s
 }
@@ -39,9 +40,12 @@ func init() {
 }
 
 func (s *sGroupMessageEvent) Event(client *client.QQClient, event *message.GroupMessage) {
+	ctx := gctx.New()
+	g.Log().Infof(ctx, "收到群聊消息：GroupCode：%d,SenderUin：%d，msg：%s", event.GroupCode, event.Sender.Uin, event.ToString())
 	err := newPerformer(client, event).DoEvent()
 	if err != nil {
 		// 该干嘛捏
+		g.Log().Errorf(ctx, "群聊消息处理失败：%+v", err)
 	}
 }
 
@@ -59,13 +63,8 @@ func (s *groupMessageEventPerformer) DoEvent() error {
 func (s *groupMessageEventPerformer) strategyMsg() (bool, error) {
 	msg := s.Event.ToString()
 
-	isAt, err := utils.IsAtRobotGroup(s.Client, s.Event.GroupCode, msg)
-	if err != nil {
-		return false, gerror.Wrap(err, "获取是否@bot失败")
-	}
-
 	switch {
-	case isAt: // @事件
+	case utils.IsAtRobotGroup(s.Client, s.Event.GroupCode, msg): // @事件
 		return s.atEvent(msg)
 	}
 	return false, nil

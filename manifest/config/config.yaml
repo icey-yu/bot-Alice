@@ -1,22 +1,27 @@
 server:
-  address:     ":8000"
+  address: ":8000"
   openapiPath: "/api.json"
   swaggerPath: "/swagger"
 
 logger:
   path: "resource/log"   # 日志文件路径。默认为空，表示关闭，仅输出到终端
-  level : "all"
+  level: "all"
   stdout: true
-  rotateSize:            1             # 按照日志文件大小对文件进行滚动切分。默认为0，表示关闭滚动切分特性
-  rotateBackupLimit:     10             # 按照切分的文件数量清理切分文件，当滚动切分特性开启时有效。默认为0，表示不备份，切分则删除
+  rotateSize: 1             # 按照日志文件大小对文件进行滚动切分。默认为0，表示关闭滚动切分特性
+  rotateBackupLimit: 10             # 按照切分的文件数量清理切分文件，当滚动切分特性开启时有效。默认为0，表示不备份，切分则删除
 
 filePath: "resource/file/"
-
-logPath: "resource/log"
 
 qqAccount:
   number: 2781337720
   psw: "Aa^2034809175"
 
+chatGPT:
+  address: "127.0.0.1:8848"
+  key: "Alice"
 
-
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  psw: ""
+  db: 9

@@ -1,0 +1,45 @@
+2023-03-18 17:41:20.214 [ERRO] {48181fb2177a4d17feb87337dcde13db} 群聊消息处理失败：调用ChatGPT失败: 调用chatGPT失败: 发送聊天请求失败: chat失败：: Failed to convert response to ChatGptResponse
+1. 调用ChatGPT失败
+   1).  bot-Alice/internal/logic/groupMessageEvent.(*groupMessageEventPerformer).atEvent
+        D:/App/Coding/Golang/Project/self/bot-Alice/internal/logic/groupMessageEvent/at_event.go:23
+2. 调用chatGPT失败
+   1).  bot-Alice/internal/logic/groupMessageEvent.(*groupMessageEventPerformer).callChatGPT
+        D:/App/Coding/Golang/Project/self/bot-Alice/internal/logic/groupMessageEvent/at_event.go:38
+3. 发送聊天请求失败
+   1).  bot-Alice/internal/logic/chatGPT.(*sChatGPT).chat
+        D:/App/Coding/Golang/Project/self/bot-Alice/internal/logic/chatGPT/chat_gpt.go:64
+4. chat失败：
+5. Failed to convert response to ChatGptResponse
+   1).  bot-Alice/internal/logic/chatGPT.(*sChatGPT).sendChat
+        D:/App/Coding/Golang/Project/self/bot-Alice/internal/logic/chatGPT/chat_gpt.go:105
+   2).  bot-Alice/internal/logic/chatGPT.(*sChatGPT).chat
+        D:/App/Coding/Golang/Project/self/bot-Alice/internal/logic/chatGPT/chat_gpt.go:62
+   3).  bot-Alice/internal/logic/chatGPT.(*sChatGPT).GroupChat
+        D:/App/Coding/Golang/Project/self/bot-Alice/internal/logic/chatGPT/chat_gpt.go:49
+   4).  bot-Alice/internal/logic/groupMessageEvent.(*groupMessageEventPerformer).callChatGPT
+        D:/App/Coding/Golang/Project/self/bot-Alice/internal/logic/groupMessageEvent/at_event.go:34
+   5).  bot-Alice/internal/logic/groupMessageEvent.(*groupMessageEventPerformer).atEvent
+        D:/App/Coding/Golang/Project/self/bot-Alice/internal/logic/groupMessageEvent/at_event.go:21
+   6).  bot-Alice/internal/logic/groupMessageEvent.(*groupMessageEventPerformer).strategyMsg
+        D:/App/Coding/Golang/Project/self/bot-Alice/internal/logic/groupMessageEvent/strategy.go:68
+   7).  bot-Alice/internal/logic/groupMessageEvent.(*groupMessageEventPerformer).DoEvent
+        D:/App/Coding/Golang/Project/self/bot-Alice/internal/logic/groupMessageEvent/strategy.go:55
+   8).  bot-Alice/internal/logic/groupMessageEvent.(*sGroupMessageEvent).Event
+        D:/App/Coding/Golang/Project/self/bot-Alice/internal/logic/groupMessageEvent/strategy.go:45
+   9).  github.com/Mrs4s/MiraiGo/client.(*EventHandle[...]).dispatch
+        C:/Users/Alice/go/pkg/mod/github.com/!mrs4s/!mirai!go@v0.0.0-20230315231550-b461f356a30a/client/events.go:40
+   10). github.com/Mrs4s/MiraiGo/client.decodeGroupMessagePacket
+        C:/Users/Alice/go/pkg/mod/github.com/!mrs4s/!mirai!go@v0.0.0-20230315231550-b461f356a30a/client/group_msg.go:255
+   11). github.com/Mrs4s/MiraiGo/client.(*QQClient).netLoop.func1
+        C:/Users/Alice/go/pkg/mod/github.com/!mrs4s/!mirai!go@v0.0.0-20230315231550-b461f356a30a/client/network.go:405
+
+Stack:
+1.  bot-Alice/internal/logic/groupMessageEvent.(*sGroupMessageEvent).Event
+    D:/App/Coding/Golang/Project/self/bot-Alice/internal/logic/groupMessageEvent/strategy.go:48
+2.  github.com/Mrs4s/MiraiGo/client.(*EventHandle[...]).dispatch
+    C:/Users/Alice/go/pkg/mod/github.com/!mrs4s/!mirai!go@v0.0.0-20230315231550-b461f356a30a/client/events.go:40
+3.  github.com/Mrs4s/MiraiGo/client.decodeGroupMessagePacket
+    C:/Users/Alice/go/pkg/mod/github.com/!mrs4s/!mirai!go@v0.0.0-20230315231550-b461f356a30a/client/group_msg.go:255
+4.  github.com/Mrs4s/MiraiGo/client.(*QQClient).netLoop.func1
+    C:/Users/Alice/go/pkg/mod/github.com/!mrs4s/!mirai!go@v0.0.0-20230315231550-b461f356a30a/client/network.go:405
+

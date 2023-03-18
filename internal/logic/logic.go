@@ -5,6 +5,7 @@
 package logic
 
 import (
+	_ "bot-Alice/internal/logic/chatGPT"
 	_ "bot-Alice/internal/logic/groupMessageEvent"
 	_ "bot-Alice/internal/logic/login"
 )

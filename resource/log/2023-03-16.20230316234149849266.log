@@ -1,0 +1,14 @@
+2023-03-16 23:41:49.047 开始登录
+2023-03-16 23:41:49.840 [ERRO] 读文件失败: open resource/file/token.txt: The system cannot find the file specified.
+Stack:
+1.  bot-Alice/internal/logic/login.(*sLogin).tokenLogin
+    D:/App/Coding/Golang/Project/self/bot-Alice/internal/logic/login/login.go:66
+2.  bot-Alice/internal/logic/login.(*sLogin).Login
+    D:/App/Coding/Golang/Project/self/bot-Alice/internal/logic/login/login.go:53
+3.  bot-Alice/internal/core/login.Init
+    D:/App/Coding/Golang/Project/self/bot-Alice/internal/core/login/login.go:10
+4.  bot-Alice/internal/core.Init
+    D:/App/Coding/Golang/Project/self/bot-Alice/internal/core/initialize.go:12
+5.  main.main
+    D:/App/Coding/Golang/Project/self/bot-Alice/main.go:15
+

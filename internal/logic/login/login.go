@@ -39,6 +39,12 @@ func init() {
 // Login 登录
 func (s *sLogin) Login() error {
 	ctx := context.Background()
+
+	if global.Alice != nil && global.Alice.Online.Load() {
+		g.Log().Info(ctx, "已经登录，无需重新登录")
+		return nil
+	}
+
 	g.Log().Printf(ctx, "开始登录")
 	global.Alice = client.NewClient(s.number, s.psw)
 	global.Alice.UseDevice(client.GenRandomDevice())
@@ -46,9 +52,9 @@ func (s *sLogin) Login() error {
 
 	err := s.tokenLogin(ctx)
 	if err != nil {
-		g.Log().Error(ctx, err.Error())
+		return gerror.Wrapf(err, "登录失败")
 	}
-	g.Log().Printf(ctx, "登录成功")
+	g.Log().Printf(ctx, "登录完毕")
 	return nil
 }
 
@@ -63,15 +69,16 @@ func (s *sLogin) tokenLogin(ctx context.Context) error {
 		err = global.Alice.TokenLogin(token)
 		if err != nil {
 			g.Log().Error(ctx, gerror.Wrapf(err, "token登录失败"))
-		}
-	} else {
-		if global.Alice.Online.Load() {
-			err = s.commonLogin(ctx)
-			if err != nil {
-				return gerror.Wrapf(err, "登录失败")
-			}
+		} else {
+			return nil
 		}
 	}
+	// 登录未成功，普通登录
+	err = s.commonLogin(ctx)
+	if err != nil {
+		return gerror.Wrapf(err, "账号密码登录失败")
+	}
+
 	return nil
 }
 
@@ -81,11 +88,15 @@ func (s *sLogin) commonLogin(ctx context.Context) error {
 	if err != nil {
 		return gerror.Wrapf(err, "登录失败")
 	}
-	g.Log().Printf(ctx, "登录状态:%T", login.Success)
+	if login.Error.String() != "" {
+		return gerror.New(login.Error.String())
+	}
+	g.Log().Printf(ctx, "登录状态:%t", login.Success)
 	// 写token
 	err = os.WriteFile(fmt.Sprintf("%stoken.txt", s.filePath), global.Alice.GenToken(), 0777)
 	if err != nil {
 		g.Log().Error(ctx, "写token失败。")
 	}
+
 	return nil
 }
