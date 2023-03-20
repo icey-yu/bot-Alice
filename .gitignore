@@ -12,3 +12,5 @@ main
 output/
 manifest/output/
 temp/
+*/token*.txt
+/resource/log
