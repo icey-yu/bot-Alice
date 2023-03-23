@@ -30,7 +30,8 @@ const (
 
 var (
 	// mutexMap 锁，每个组、每个人都有锁，第一个key为type，第二个为uin。
-	mutexMap = make(map[int]map[int64]*sync.Mutex, 0)
+	mutex = sync.Mutex{}
+	ch    = make(chan bool, 1000) // 用于计数
 )
 
 type (
@@ -50,27 +51,22 @@ func new_() *sChatGPT {
 
 func init() {
 	service.RegisterChatGPT(new_())
-	mutexMap[consts.Group] = make(map[int64]*sync.Mutex, 0)
-	mutexMap[consts.Private] = make(map[int64]*sync.Mutex, 0)
 }
 
 func (s *sChatGPT) GroupChat(code int64, msg string) (string, error) {
-	if mu, ok := mutexMap[consts.Group][code]; !ok {
-		// 新的key，新建一个锁
-		var mu sync.Mutex
-		mu.Lock()
-		defer func() {
-			mu.Unlock()
-		}()
-		mutexMap[consts.Group][code] = &mu
-	} else {
-		if !mu.TryLock() {
-			// 已经锁了
-			return "", consts.ErrChatIsLocked
-		} else {
-			defer mu.Unlock()
-		}
+	// 锁
+	if ok := mutex.TryLock(); !ok {
+		// 有人正在使用
+		sendMsg := utils.BuildTextMessage(fmt.Sprintf("有%d人正在使用chatGPT，稍后将为您重新调用~", len(ch)))
+		global.Alice.SendGroupMessage(code, sendMsg)
 	}
+	defer func() {
+		mutex.Unlock() // 解锁
+		<-ch
+	}()
+
+	ch <- true
+	mutex.Lock()
 	return s.chat(consts.Group, code, msg)
 }
 

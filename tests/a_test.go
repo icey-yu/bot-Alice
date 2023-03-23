@@ -22,8 +22,8 @@ func TestA(t *testing.T) {
 	//bot := client.NewClient(2781337720, "Aa^2034809175")
 	bot := client.NewClientEmpty()
 	device := client.GenRandomDevice()
-	bot.UseDevice(device)
 	device.Protocol = client.AndroidWatch
+	bot.UseDevice(device)
 	//bot.Device().Protocol = client.AndroidPad
 
 	err := os.WriteFile("device.txt", bot.Device().ToJson(), 0777)
@@ -52,7 +52,7 @@ func TestA(t *testing.T) {
 			return
 		}
 
-		time.Sleep(time.Minute * 2)
+		time.Sleep(time.Second * 20)
 	}
 	println(bot.GenToken())
 	err = os.WriteFile("token.txt", bot.GenToken(), 0777)
