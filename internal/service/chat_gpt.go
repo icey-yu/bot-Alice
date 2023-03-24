@@ -5,9 +5,13 @@
 
 package service
 
+import (
+	"github.com/Mrs4s/MiraiGo/message"
+)
+
 type (
 	IChatGPT interface {
-		GroupChat(code int64, msg string) (string, error)
+		GroupChat(groupMessage *message.GroupMessage, msg string) (string, error)
 		PrivateChat(code int64, msg string) (string, error)
 	}
 )

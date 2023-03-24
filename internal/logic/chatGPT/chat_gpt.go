@@ -10,6 +10,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/Mrs4s/MiraiGo/message"
 	"io"
 	"sync"
 	"time"
@@ -27,7 +28,8 @@ const (
 	groupRedisKeyFormat   = "botAlice:chatGPT:group:%d"   // 群聊的redis会话消息保存key
 	privateRedisKeyFormat = "botAlice:chatGPT:private:%d" // 私聊的redis会话消息保存key
 
-	tryTimes = 2 // 最多尝试次数
+	tryTimes    = 10              // 最多尝试次数。半分钟刷新时间，是很正常的
+	refreshTime = time.Second * 3 // 重试的等待时间
 )
 
 var (
@@ -55,20 +57,27 @@ func init() {
 	service.RegisterChatGPT(new_())
 }
 
-func (s *sChatGPT) GroupChat(code int64, msg string) (string, error) {
+func (s *sChatGPT) GroupChat(groupMessage *message.GroupMessage, msg string) (string, error) {
+	code := groupMessage.GroupCode
+	replyMsg := message.NewReply(groupMessage)
 	// 锁
+	ch <- true
 	if ok := mutex.TryLock(); !ok {
 		// 有人正在使用
-		sendMsg := utils.BuildTextMessage(fmt.Sprintf("有%d人正在使用chatGPT，稍后将为您重新调用~", len(ch)))
+		sendMsg := utils.BuildTextMessage(fmt.Sprintf("有%d条消息在您之前使用chatGPT，稍后将为您重新调用~", len(ch)-1)).Append(replyMsg)
 		global.Alice.SendGroupMessage(code, sendMsg)
 		mutex.Lock()
+	} else {
+		// 发送消息表示已经接收到了请求
+		sendMsg := message.NewSendingMessage()
+		textMsg := message.NewText("让我想想呢🤔...") // 单独🤔 不支持reply消息，哈软！
+		sendMsg.Elements = append(sendMsg.Elements, replyMsg, textMsg)
+		global.Alice.SendGroupMessage(code, sendMsg)
 	}
 	defer func() {
 		mutex.Unlock() // 解锁
 		<-ch
 	}()
-
-	ch <- true
 
 	return s.chat(consts.Group, code, msg)
 }
@@ -95,11 +104,12 @@ func (s *sChatGPT) chat(type_ int, code int64, msg string) (string, error) {
 		// 说明有错
 		g.Log().Errorf(gctx.New(), err.Error())
 		reTryCount++
+		time.Sleep(refreshTime) // 等待页面刷新
 	}
 	if err != nil {
 		return "", gerror.Wrapf(err, "发送聊天请求失败")
 	}
-	
+
 	msgData.ConversationId = resp.ConversationId
 	msgData.ParentId = resp.ResponseId
 	err = s.saveMsgData(type_, code, *msgData)

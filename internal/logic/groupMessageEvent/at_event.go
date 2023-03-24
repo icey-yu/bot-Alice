@@ -32,10 +32,8 @@ func (s *groupMessageEventPerformer) atEvent(msg string) (bool, error) {
 
 // callChatGPT 调用chatGPT
 func (s *groupMessageEventPerformer) callChatGPT(msg string) error {
-	sendMsg := utils.BuildTextMessage("🤔")
-	s.Client.SendGroupMessage(s.Event.GroupCode, sendMsg)
 	// 开始调用chatGPT
-	res, err := service.ChatGPT().GroupChat(s.Event.GroupCode, msg)
+	res, err := service.ChatGPT().GroupChat(s.Event, msg)
 	if err != nil {
 		if gerror.Is(err, consts.ErrChatIsLocked) {
 			// 因为有人正在聊天而失败
@@ -49,8 +47,9 @@ func (s *groupMessageEventPerformer) callChatGPT(msg string) error {
 	}
 	sendingMessage := message.NewSendingMessage()
 	reply := message.NewReply(s.Event)
+	at := message.NewAt(s.Event.Sender.Uin) // at并没有起效果qaq
 	msgStr := message.NewText(res)
-	sendingMessage.Elements = append(sendingMessage.Elements, reply, msgStr)
+	sendingMessage.Elements = append(sendingMessage.Elements, at, reply, at, msgStr)
 	s.Client.SendGroupMessage(s.Event.GroupCode, sendingMessage)
 	return nil
 }
