@@ -49,7 +49,7 @@ func (s *sLogin) Login() error {
 	g.Log().Printf(ctx, "开始登录")
 	global.Alice = client.NewClient(s.number, s.psw)
 	global.Alice.UseDevice(client.GenRandomDevice())
-	global.Alice.AllowSlider = true
+	//global.Alice.AllowSlider = true
 
 	err := s.tokenLogin(ctx)
 	if err != nil {
@@ -89,7 +89,7 @@ func (s *sLogin) commonLogin(ctx context.Context) error {
 	if err != nil {
 		return gerror.Wrapf(err, "登录失败")
 	}
-	if login.Error.String() != "" {
+	if login.Error.String() != "LoginError(0)" {
 		return gerror.New(login.Error.String())
 	}
 	g.Log().Printf(ctx, "登录状态:%t", login.Success)

@@ -18,11 +18,6 @@ func Post(url string, body io.Reader, header map[string]string, inOverTime ...ti
 		return nil, err
 	}
 
-	content := make([]byte, 0)
-	_, _ = body.Read(content)
-	println("开始输出请求体")
-	println(string(content))
-
 	for k, v := range header {
 		req.Header.Set(k, v)
 	}

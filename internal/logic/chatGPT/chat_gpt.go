@@ -26,10 +26,12 @@ const (
 	overTime              = time.Minute * 2               // 超时两分钟
 	groupRedisKeyFormat   = "botAlice:chatGPT:group:%d"   // 群聊的redis会话消息保存key
 	privateRedisKeyFormat = "botAlice:chatGPT:private:%d" // 私聊的redis会话消息保存key
+
+	tryTimes = 2 // 最多尝试次数
 )
 
 var (
-	// mutexMap 锁，每个组、每个人都有锁，第一个key为type，第二个为uin。
+	// mutex
 	mutex = sync.Mutex{}
 	ch    = make(chan bool, 1000) // 用于计数
 )
@@ -59,6 +61,7 @@ func (s *sChatGPT) GroupChat(code int64, msg string) (string, error) {
 		// 有人正在使用
 		sendMsg := utils.BuildTextMessage(fmt.Sprintf("有%d人正在使用chatGPT，稍后将为您重新调用~", len(ch)))
 		global.Alice.SendGroupMessage(code, sendMsg)
+		mutex.Lock()
 	}
 	defer func() {
 		mutex.Unlock() // 解锁
@@ -66,7 +69,7 @@ func (s *sChatGPT) GroupChat(code int64, msg string) (string, error) {
 	}()
 
 	ch <- true
-	mutex.Lock()
+
 	return s.chat(consts.Group, code, msg)
 }
 
@@ -80,10 +83,23 @@ func (s *sChatGPT) chat(type_ int, code int64, msg string) (string, error) {
 		return "", gerror.Wrapf(err, "获取会话消息失败")
 	}
 	msgData.Content = msg
-	resp, err := s.sendChat(msgData)
+
+	// 添加重试
+	reTryCount := 0
+	var resp *model.ChatGPTResp
+	for reTryCount < tryTimes {
+		resp, err = s.sendChat(msgData)
+		if err == nil {
+			break
+		}
+		// 说明有错
+		g.Log().Errorf(gctx.New(), err.Error())
+		reTryCount++
+	}
 	if err != nil {
 		return "", gerror.Wrapf(err, "发送聊天请求失败")
 	}
+	
 	msgData.ConversationId = resp.ConversationId
 	msgData.ParentId = resp.ResponseId
 	err = s.saveMsgData(type_, code, *msgData)

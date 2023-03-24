@@ -1,9 +1,9 @@
 package model
 
 type ChatGPTMessage struct {
-	Content        string
-	ConversationId string // 会话ID
-	ParentId       string // 上一句的ID
+	Content        string `json:"content"`
+	ConversationId string `json:"conversation_id"` // 会话ID
+	ParentId       string `json:"parent_id"`       // 上一句的ID
 }
 
 type ChatGPTResp struct {
