@@ -29,7 +29,7 @@ const (
 	privateRedisKeyFormat = "botAlice:chatGPT:private:%d" // 私聊的redis会话消息保存key
 
 	tryTimes    = 10              // 最多尝试次数。半分钟刷新时间，是很正常的
-	refreshTime = time.Second * 3 // 重试的等待时间
+	refreshTime = time.Second * 6 // 重试的等待时间
 )
 
 var (

@@ -5,7 +5,12 @@ import (
 )
 
 func TestB(t *testing.T) {
-	ch := make(chan int, 100)
-	ch <- 1
-	println(len(ch))
+	li := make([]int, 0)
+	add(li)
+	println(li)
+}
+
+func add(li []int) []int {
+	li = append(li, 5)
+	return li
 }

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"github.com/Mrs4s/MiraiGo/message"
 	"strings"
 
 	"github.com/Mrs4s/MiraiGo/client"
@@ -11,22 +12,35 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 )
 
-// IsAtRobotGroup 群聊消息中是否@机器人
-func IsAtRobotGroup(bot *client.QQClient, groupCode int64, msg string) bool {
+// IsAtRobotGroupStr 群聊消息中是否@机器人
+func IsAtRobotGroupStr(bot *client.QQClient, groupCode int64, messages []message.IMessageElement, msg string) bool {
 	ctx := gctx.New()
-	cardName, err := GetGroupCardName(bot, groupCode)
+	cardName, err := GetBotGroupDisplayName(bot, groupCode)
 	if err != nil {
 		g.Log().Errorf(ctx, "获取botCardName失败:%v", err)
 		return false
 	}
 
-	return IsAt(cardName, msg)
+	return IsAtStr(cardName, msg) || IsAtEle(bot.Uin, messages)
 }
 
-// IsAt 是否@
-func IsAt(name string, msg string) bool {
+// IsAtStr 通过字符串判断是否@
+func IsAtStr(name string, msg string) bool {
 	atStr := fmt.Sprintf("@%s", name)
 	return gstr.Contains(msg, atStr)
+}
+
+// IsAtEle 通过element判断是否@
+func IsAtEle(code int64, messages []message.IMessageElement) bool {
+	for _, msg := range messages {
+		if msg.Type() == message.At {
+			atMsg := msg.(*message.AtElement)
+			if atMsg.Target == code {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // IsPraise 是否夸赞

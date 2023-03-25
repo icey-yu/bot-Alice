@@ -4,6 +4,7 @@ import (
 	"bot-Alice/internal/consts"
 	"bot-Alice/internal/service"
 	"bot-Alice/internal/utils"
+	"fmt"
 	"github.com/Mrs4s/MiraiGo/message"
 
 	"github.com/gogf/gf/v2/errors/gerror"
@@ -12,7 +13,7 @@ import (
 func (s *groupMessageEventPerformer) atEvent(msg string) (bool, error) {
 	// 是否是夸赞~
 
-	msgExAt, err := utils.RemoveGroupAt(s.Client, s.Event.GroupCode, msg)
+	msgExAt, err := utils.RemoveGroupAtStr(s.Client, s.Event.GroupCode, msg)
 	if err != nil {
 		return false, gerror.Wrapf(err, "移除@失败")
 	}
@@ -47,7 +48,7 @@ func (s *groupMessageEventPerformer) callChatGPT(msg string) error {
 	}
 	sendingMessage := message.NewSendingMessage()
 	reply := message.NewReply(s.Event)
-	at := message.NewAt(s.Event.Sender.Uin) // at并没有起效果qaq
+	at := message.NewAt(s.Event.Sender.Uin, fmt.Sprintf("@%s", s.Event.Sender.DisplayName())) // at并没有起效果qaq
 	msgStr := message.NewText(res)
 	sendingMessage.Elements = append(sendingMessage.Elements, at, reply, at, msgStr)
 	s.Client.SendGroupMessage(s.Event.GroupCode, sendingMessage)

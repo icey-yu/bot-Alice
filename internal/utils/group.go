@@ -5,8 +5,8 @@ import (
 	"github.com/gogf/gf/v2/errors/gerror"
 )
 
-// GetGroupCardName 获取群昵称
-func GetGroupCardName(bot *client.QQClient, groupCode int64) (string, error) {
+// GetBotGroupDisplayName 获取机器人群昵称。如果没有昵称（CardName）则返回NickName
+func GetBotGroupDisplayName(bot *client.QQClient, groupCode int64) (string, error) {
 	info, err := bot.GetGroupInfo(groupCode)
 	if err != nil {
 		return "", gerror.Wrap(err, "获取群聊失败")
@@ -27,11 +27,11 @@ func GetGroupCardName(bot *client.QQClient, groupCode int64) (string, error) {
 	return self.CardName, nil
 }
 
-// RemoveGroupAt 去除群聊消息中的@
-func RemoveGroupAt(bot *client.QQClient, groupCode int64, msg string) (string, error) {
-	cardName, err := GetGroupCardName(bot, groupCode)
+// RemoveGroupAtStr 去除string类型的群聊消息中的@
+func RemoveGroupAtStr(bot *client.QQClient, groupCode int64, msg string) (string, error) {
+	cardName, err := GetBotGroupDisplayName(bot, groupCode)
 	if err != nil {
 		return "", gerror.Wrap(err, "获取群昵称失败")
 	}
-	return RemoveAt(cardName, msg), nil
+	return RemoveAtStr(cardName, msg), nil
 }
