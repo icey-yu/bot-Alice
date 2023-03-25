@@ -65,7 +65,7 @@ func (s *groupMessageEventPerformer) strategyMsg() (bool, error) {
 	msg := s.Event.ToString()
 
 	switch {
-	case utils.IsAtEle(s.Client.Uin, s.Event.Elements): // @事件
+	case utils.IsAtRobotGroupStr(s.Client, s.Event): // @事件
 		return s.atEvent(msg)
 	}
 	return false, nil

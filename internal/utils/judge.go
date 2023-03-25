@@ -13,15 +13,15 @@ import (
 )
 
 // IsAtRobotGroupStr 群聊消息中是否@机器人
-func IsAtRobotGroupStr(bot *client.QQClient, groupCode int64, messages []message.IMessageElement, msg string) bool {
+func IsAtRobotGroupStr(bot *client.QQClient, event *message.GroupMessage) bool {
 	ctx := gctx.New()
-	cardName, err := GetBotGroupDisplayName(bot, groupCode)
+	cardName, err := GetBotGroupDisplayName(bot, event.GroupCode)
 	if err != nil {
 		g.Log().Errorf(ctx, "获取botCardName失败:%v", err)
 		return false
 	}
 
-	return IsAtStr(cardName, msg) || IsAtEle(bot.Uin, messages)
+	return IsAtStr(cardName, event.ToString()) || IsAtEle(bot.Uin, event.Elements)
 }
 
 // IsAtStr 通过字符串判断是否@
