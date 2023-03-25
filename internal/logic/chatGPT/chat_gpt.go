@@ -28,8 +28,10 @@ const (
 	groupRedisKeyFormat   = "botAlice:chatGPT:group:%d"   // 群聊的redis会话消息保存key
 	privateRedisKeyFormat = "botAlice:chatGPT:private:%d" // 私聊的redis会话消息保存key
 
-	tryTimes    = 10              // 最多尝试次数。半分钟刷新时间，是很正常的
-	refreshTime = time.Second * 6 // 重试的等待时间
+	tryTimes    = 6                // 最多尝试次数。
+	refreshTime = time.Second * 10 // 重试的等待时间
+
+	errConversation = "doesn't exists" // 会话不存在的err内容
 )
 
 var (
@@ -103,8 +105,14 @@ func (s *sChatGPT) chat(type_ int, code int64, msg string) (string, error) {
 		}
 		// 说明有错
 		g.Log().Errorf(gctx.New(), err.Error())
+		// 判断是否因为会话不存在出错
+		if gerror.Cause(err).Error() == "Conversation doesn't exists" {
+			msgData.ParentId = ""
+			msgData.ConversationId = ""
+		}
 		reTryCount++
 		time.Sleep(refreshTime) // 等待页面刷新
+
 	}
 	if err != nil {
 		return "", gerror.Wrapf(err, "发送聊天请求失败")

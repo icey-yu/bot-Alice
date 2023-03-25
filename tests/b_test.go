@@ -1,16 +1,16 @@
 package tests
 
 import (
+	"fmt"
 	"testing"
 )
 
 func TestB(t *testing.T) {
-	li := make([]int, 0)
-	add(li)
-	println(li)
-}
 
-func add(li []int) []int {
-	li = append(li, 5)
-	return li
+    x := 5
+    y := ~x
+    fmt.Println(y) // 输出 -6
+
+    z := int(0)
+    fmt.Println(z) // 输出 -1
 }
